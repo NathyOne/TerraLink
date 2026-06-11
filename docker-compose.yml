@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: terralink-postgres
+    environment:
+      POSTGRES_DB: terralink
+      POSTGRES_USER: terralink
+      POSTGRES_PASSWORD: terralink
+    ports:
+      - "5432:5432"
+    volumes:
+      - terralink_postgres:/var/lib/postgresql/data
+
+volumes:
+  terralink_postgres:
