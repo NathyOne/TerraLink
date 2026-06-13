@@ -15,9 +15,11 @@ class UserSummarySerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=8, required=False, allow_blank=False)
+
     class Meta:
         model = UserModel
-        fields = ("id", "username", "email", "role", "phone_number", "is_active", "created_at")
+        fields = ("id", "username", "email", "password", "role", "phone_number", "is_active", "created_at")
         read_only_fields = ("id", "created_at")
 
     def get_fields(self):
@@ -26,7 +28,33 @@ class UserSerializer(serializers.ModelSerializer):
         if not request or not is_admin_user(request.user):
             fields["role"].read_only = True
             fields["is_active"].read_only = True
+            fields["password"].read_only = True
         return fields
+
+    def validate(self, attrs):
+        if self.instance is None and not attrs.get("password"):
+            raise serializers.ValidationError({"password": "Password is required."})
+        return attrs
+
+    def create(self, validated_data):
+        password = validated_data.pop("password")
+        user = UserModel(**validated_data)
+        if user.role == User.Role.ADMIN:
+            user.is_staff = True
+        user.set_password(password)
+        user.save()
+        return user
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop("password", None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if instance.role == User.Role.ADMIN:
+            instance.is_staff = True
+        if password:
+            instance.set_password(password)
+        instance.save()
+        return instance
 
 
 class RegisterSerializer(serializers.ModelSerializer):

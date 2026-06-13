@@ -1,18 +1,29 @@
-import { Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { api, getErrorMessage, toList } from "../../api/client";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "../../components/DataState";
-import { inputClass } from "../../components/FormControls";
+import { Field, buttonClass, inputClass } from "../../components/FormControls";
 import StatusBadge from "../../components/StatusBadge";
 import { useI18n } from "../../i18n/I18nContext";
 import { roleLabel, shortDate } from "../../utils/format";
 
+const initialForm = {
+  username: "",
+  email: "",
+  password: "",
+  role: "admin",
+  phone_number: "",
+  is_active: true,
+};
+
 export default function UsersManagement() {
   const { t } = useI18n();
   const [users, setUsers] = useState([]);
+  const [form, setForm] = useState(initialForm);
   const [filters, setFilters] = useState({ search: "", role: "" });
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   async function load() {
@@ -43,12 +54,62 @@ export default function UsersManagement() {
     }
   };
 
+  const createUser = async (event) => {
+    event.preventDefault();
+    setSaving(true);
+    setError("");
+    try {
+      await api.post("/users/", form);
+      setForm(initialForm);
+      await load();
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-5">
       <div>
         <h2 className="text-2xl font-bold text-slate-950">{t("Users Management")}</h2>
         <p className="mt-1 text-sm font-medium text-stone-500">{t("Platform accounts and access state.")}</p>
       </div>
+      <form onSubmit={createUser} className="rounded-lg border border-stone-200 bg-white p-5 shadow-soft">
+        <div className="grid gap-4">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-lg font-bold text-slate-950">{t("Create user")}</h3>
+            <span className="text-sm font-medium text-stone-500">{t("Admins can create admin accounts here.")}</span>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+            <Field label="Username">
+              <input className={inputClass} value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} required />
+            </Field>
+            <Field label="Email">
+              <input className={inputClass} type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+            </Field>
+            <Field label="Password">
+              <input className={inputClass} type="password" minLength={8} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
+            </Field>
+            <Field label="Role">
+              <select className={inputClass} value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
+                {Object.entries(roleLabel).map(([value, label]) => (
+                  <option key={value} value={value}>{t(label)}</option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Phone">
+              <input className={inputClass} value={form.phone_number} onChange={(e) => setForm({ ...form, phone_number: e.target.value })} />
+            </Field>
+          </div>
+          <div className="flex justify-end">
+            <button disabled={saving} className={buttonClass} type="submit">
+              <Plus size={17} />
+              {t("Create user")}
+            </button>
+          </div>
+        </div>
+      </form>
       <div className="grid gap-3 rounded-lg border border-stone-200 bg-white p-4 shadow-soft md:grid-cols-[1fr_240px]">
         <label className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={17} />

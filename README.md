@@ -33,6 +33,15 @@ python manage.py seed_demo
 python manage.py runserver 0.0.0.0:8000
 ```
 
+For production, create the first admin from environment variables after migrations:
+
+```bash
+python manage.py migrate
+python manage.py create_initial_admin
+```
+
+Set `DJANGO_ADMIN_USERNAME`, `DJANGO_ADMIN_PASSWORD`, `DJANGO_ADMIN_EMAIL`, and optionally `DJANGO_ADMIN_PHONE` in your host. After that, create additional admin accounts from the TerraLink admin Users page. Public registration cannot create admin accounts.
+
 API docs:
 
 - Swagger: `http://localhost:8000/api/docs/`
@@ -62,5 +71,5 @@ Frontend URL: `http://localhost:5173`
 - Construction owners can submit and view only their own machine requests.
 - Machine owners can add/edit only their own machines and view admin messages.
 - Machine owners have no job listing or job application route.
-- Admins can view requests, filter machines, message owners, assign machines, manage users, and manage admin-only materials.
+- Admins can view requests, filter machines, message owners, assign machines, manage users, create other admins, and manage admin-only materials.
 # TerraLink
