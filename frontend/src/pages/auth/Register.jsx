@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Hammer, UserPlus } from "lucide-react";
+import { Eye, EyeOff, Hammer, Loader2, UserPlus } from "lucide-react";
 
 import { getErrorMessage } from "../../api/client";
 import { ErrorBlock } from "../../components/DataState";
@@ -93,8 +93,8 @@ export default function Register() {
             </span>
           </Field>
           <button disabled={saving} className={`${buttonClass} w-full`} type="submit">
-            <UserPlus size={17} />
-            {t("Create account")}
+            {saving ? <Loader2 className="animate-spin" size={17} /> : <UserPlus size={17} />}
+            {saving ? t("Creating account...") : t("Create account")}
           </button>
         </div>
         <p className="mt-5 text-center text-sm font-medium text-stone-600">
@@ -104,6 +104,17 @@ export default function Register() {
           </Link>
         </p>
       </form>
+      {saving && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-6 backdrop-blur-sm">
+          <div className="flex w-full max-w-sm flex-col items-center rounded-2xl border border-white/20 bg-white p-6 text-center shadow-soft">
+            <div className="mb-4 h-14 w-14 rounded-full bg-amber-50 p-2">
+              <Loader2 className="h-full w-full animate-spin text-amber-600" size={40} />
+            </div>
+            <p className="text-base font-bold text-slate-950">{t("Creating account...")}</p>
+            <p className="mt-1 text-sm font-medium text-stone-500">{t("Please wait while we prepare your dashboard.")}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
