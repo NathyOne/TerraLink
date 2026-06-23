@@ -19,10 +19,9 @@ export const useAuthStore = create(
       setSession: ({ access, refresh, user }) => set({ access, refresh, user }),
       login: async ({ username, password }) => {
         const tokenResponse = await api.post("/auth/token/", { username, password });
-        set({ access: tokenResponse.data.access, refresh: tokenResponse.data.refresh });
-        const meResponse = await api.get("/auth/me/");
-        set({ user: meResponse.data });
-        return meResponse.data;
+        const user = tokenResponse.data.user;
+        set({ access: tokenResponse.data.access, refresh: tokenResponse.data.refresh, user });
+        return user;
       },
       register: async (payload) => {
         await api.post("/auth/register/", payload);

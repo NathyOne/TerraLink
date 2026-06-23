@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Hammer, LogIn } from "lucide-react";
+import { Hammer, Loader2, LogIn } from "lucide-react";
 
 import { getErrorMessage } from "../../api/client";
 import { Field, buttonClass, inputClass } from "../../components/FormControls";
@@ -53,8 +53,8 @@ export default function Login() {
             <input className={inputClass} type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} autoComplete="current-password" required />
           </Field>
           <button disabled={saving} className={`${buttonClass} w-full`} type="submit">
-            <LogIn size={17} />
-            {t("Login")}
+            {saving ? <Loader2 className="animate-spin" size={17} /> : <LogIn size={17} />}
+            {saving ? t("Signing you in...") : t("Login")}
           </button>
         </div>
         <p className="mt-5 text-center text-sm font-medium text-stone-600">
@@ -64,6 +64,17 @@ export default function Login() {
           </Link>
         </p>
       </form>
+      {saving && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-6 backdrop-blur-sm">
+          <div className="flex w-full max-w-sm flex-col items-center rounded-2xl border border-white/20 bg-white p-6 text-center shadow-soft">
+            <div className="mb-4 h-14 w-14 rounded-full bg-amber-50 p-2">
+              <Loader2 className="h-full w-full animate-spin text-amber-600" size={40} />
+            </div>
+            <p className="text-base font-bold text-slate-950">{t("Signing you in...")}</p>
+            <p className="mt-1 text-sm font-medium text-stone-500">{t("Please wait while we prepare your dashboard.")}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

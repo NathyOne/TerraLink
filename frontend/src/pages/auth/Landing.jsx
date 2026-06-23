@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 
 import backhoeImage from "../../assets/optimized/backhoe.webp";
 import dozerImage from "../../assets/optimized/dozer.webp";
-import excavatorFleetImage from "../../assets/image copy.png";
-import excavatorHero from "../../assets/image copy 6.png";
+import excavatorHero from "../../assets/optimized/hero-excavator.webp";
 import excavatorProduct from "../../assets/optimized/tracked-excavator.webp";
 import howoTrucksImage from "../../assets/optimized/howo-trucks.webp";
 import loaderImage from "../../assets/optimized/loader.webp";
@@ -20,7 +19,7 @@ const features = [
 ];
 
 const photos = [
-  { src: excavatorFleetImage, label: "Excavator fleet" },
+  { src: excavatorHero, label: "Excavator fleet" },
   { src: loaderImage, label: "Wheel loaders" },
   { src: backhoeImage, label: "Site loading" },
   { src: dozerImage, label: "Dozers" },
@@ -57,6 +56,8 @@ export default function Landing() {
           src={excavatorHero}
           alt=""
           className="absolute inset-0 h-full w-full object-cover"
+          decoding="async"
+          fetchPriority="high"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/58 to-slate-950/10" />
         <div className="mx-auto flex min-h-[88vh] max-w-7xl items-center px-4 pb-14 pt-28 lg:px-8">
@@ -111,7 +112,9 @@ export default function Landing() {
                 src={photo.src}
                 alt={photo.label}
                 className="h-56 w-full object-cover sm:h-64"
+                decoding="async"
                 loading={index === 0 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : "auto"}
               />
               <figcaption className="px-4 py-3 text-sm font-bold text-slate-800">{t(photo.label)}</figcaption>
             </figure>

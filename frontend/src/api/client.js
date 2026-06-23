@@ -4,6 +4,7 @@ export const API_URL = import.meta.env.VITE_API_URL || "https://terralink-ousa.o
 
 export const api = axios.create({
   baseURL: API_URL,
+  timeout: 60000,
 });
 
 api.interceptors.request.use((config) => {
@@ -28,6 +29,12 @@ export function toList(payload) {
 }
 
 export function getErrorMessage(error) {
+  if (error?.code === "ECONNABORTED") {
+    return "The server is taking too long to respond. Please try again in a moment.";
+  }
+  if (error?.message === "Network Error" && !error?.response) {
+    return "Cannot reach the TerraLink server. Please check the API domain and allowed origins.";
+  }
   const data = error?.response?.data;
   if (!data) return error?.message || "Something went wrong.";
   if (typeof data === "string") return data;
