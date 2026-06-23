@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Hammer, Loader2, LogIn } from "lucide-react";
+import { Eye, EyeOff, Hammer, Loader2, LogIn } from "lucide-react";
 
 import { getErrorMessage } from "../../api/client";
 import { Field, buttonClass, inputClass } from "../../components/FormControls";
@@ -16,6 +16,7 @@ export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const submit = async (event) => {
     event.preventDefault();
@@ -50,7 +51,25 @@ export default function Login() {
             <input className={inputClass} value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} autoComplete="username" required />
           </Field>
           <Field label="Password">
-            <input className={inputClass} type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} autoComplete="current-password" required />
+            <span className="relative block">
+              <input
+                className={`${inputClass} pr-11`}
+                type={showPassword ? "text" : "password"}
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                autoComplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-stone-500 transition hover:bg-stone-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-200"
+                onClick={() => setShowPassword((value) => !value)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                title={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </span>
           </Field>
           <button disabled={saving} className={`${buttonClass} w-full`} type="submit">
             {saving ? <Loader2 className="animate-spin" size={17} /> : <LogIn size={17} />}

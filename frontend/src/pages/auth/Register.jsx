@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Hammer, UserPlus } from "lucide-react";
+import { Eye, EyeOff, Hammer, UserPlus } from "lucide-react";
 
 import { getErrorMessage } from "../../api/client";
 import { ErrorBlock } from "../../components/DataState";
@@ -22,6 +22,7 @@ export default function Register() {
   });
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const submit = async (event) => {
     event.preventDefault();
@@ -70,7 +71,26 @@ export default function Register() {
             <input className={inputClass} type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
           </Field>
           <Field label="Password">
-            <input className={inputClass} type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} minLength={8} required />
+            <span className="relative block">
+              <input
+                className={`${inputClass} pr-11`}
+                type={showPassword ? "text" : "password"}
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                minLength={8}
+                autoComplete="new-password"
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-stone-500 transition hover:bg-stone-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-200"
+                onClick={() => setShowPassword((value) => !value)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                title={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </span>
           </Field>
           <button disabled={saving} className={`${buttonClass} w-full`} type="submit">
             <UserPlus size={17} />
